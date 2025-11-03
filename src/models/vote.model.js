@@ -30,7 +30,6 @@ const voteSchema = new mongoose.Schema({
   },
 });
 
-// Compound index to prevent duplicate votes (if not allowing multiple responses)
 voteSchema.index({ poll: 1, sessionId: 1 });
 voteSchema.index({ poll: 1, createdAt: -1 });
 

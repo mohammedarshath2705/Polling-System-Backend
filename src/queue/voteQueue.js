@@ -1,7 +1,6 @@
 const { Queue } = require('bullmq');
 const { redisClient } = require('../config/redis');
 
-// Create vote processing queue
 const voteQueue = new Queue('vote-processing', {
   connection: redisClient,
   defaultJobOptions: {
@@ -19,7 +18,6 @@ const voteQueue = new Queue('vote-processing', {
   },
 });
 
-// Event listeners for monitoring
 voteQueue.on('waiting', (job) => {
   console.log(`Job ${job.id} is waiting`);
 });

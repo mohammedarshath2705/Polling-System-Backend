@@ -11,17 +11,14 @@ const initializeSocket = (server) => {
     },
   });
 
-  // Handle socket connections
   io.on('connection', (socket) => {
     console.log(`Client connected: ${socket.id}`);
 
-    // Join a poll room
     socket.on('join-poll', (joinCode) => {
       socket.join(joinCode);
       console.log(`Socket ${socket.id} joined poll ${joinCode}`);
     });
 
-    // Leave a poll room
     socket.on('leave-poll', (joinCode) => {
       socket.leave(joinCode);
       console.log(`Socket ${socket.id} left poll ${joinCode}`);
@@ -32,7 +29,6 @@ const initializeSocket = (server) => {
     });
   });
 
-  // Subscribe to Redis pub/sub for real-time updates
   redisSub.subscribe('vote-updates', 'poll-updates', (err) => {
     if (err) {
       console.error('Failed to subscribe to Redis channels:', err);
@@ -41,13 +37,11 @@ const initializeSocket = (server) => {
     }
   });
 
-  // Handle messages from Redis
   redisSub.on('message', (channel, message) => {
     try {
       const data = JSON.parse(message);
 
       if (channel === 'vote-updates') {
-        // Broadcast vote update to poll room
         if (data.joinCode) {
           io.to(data.joinCode).emit('vote-update', {
             totalVotes: data.totalVotes,
@@ -55,7 +49,6 @@ const initializeSocket = (server) => {
           });
         }
       } else if (channel === 'poll-updates') {
-        // Broadcast poll status update
         if (data.joinCode) {
           io.to(data.joinCode).emit('poll-status', {
             type: data.type,

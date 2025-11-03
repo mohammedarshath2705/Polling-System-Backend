@@ -13,10 +13,8 @@ const {
 } = require('../controllers/poll.controller');
 const { protect } = require('../middleware/auth');
 
-// Public routes
 router.get('/join/:joinCode', getPollByJoinCode);
 
-// Protected routes (require authentication)
 router.use(protect);
 
 router.route('/')

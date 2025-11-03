@@ -5,7 +5,6 @@ exports.protect = async (req, res, next) => {
   try {
     let token;
 
-    // Check for token in headers
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
@@ -18,10 +17,8 @@ exports.protect = async (req, res, next) => {
     }
 
     try {
-      // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get organizer from token
       req.organizer = await Organizer.findById(decoded.id).select('-password');
 
       if (!req.organizer) {
@@ -43,7 +40,6 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-// Generate JWT token
 exports.generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '7d',

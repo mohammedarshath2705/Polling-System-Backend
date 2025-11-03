@@ -1,8 +1,6 @@
 const Poll = require('../models/poll.model');
 
-/**
- * Generate a unique 6-character join code
- */
+
 const generateJoinCode = async () => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code;
@@ -24,9 +22,7 @@ const generateJoinCode = async () => {
   return code;
 };
 
-/**
- * Generate session ID for voters
- */
+
 const generateSessionId = () => {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };

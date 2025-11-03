@@ -1,14 +1,10 @@
-/**
- * Validate email format
- */
+
 const validateEmail = (email) => {
   const re = /^\S+@\S+\.\S+$/;
   return re.test(email);
 };
 
-/**
- * Validate poll creation data
- */
+
 const validatePollData = (data) => {
   const errors = [];
 
@@ -38,9 +34,7 @@ const validatePollData = (data) => {
   };
 };
 
-/**
- * Validate vote data
- */
+
 const validateVoteData = (voteData, poll) => {
   const errors = [];
 
@@ -48,7 +42,6 @@ const validateVoteData = (voteData, poll) => {
     errors.push('No answers provided');
   }
 
-  // Check if all required questions are answered
   poll.questions.forEach((question) => {
     if (question.required) {
       const answer = voteData.answers.find(

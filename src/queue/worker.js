@@ -6,10 +6,8 @@ const { redisClient, redisPub } = require('../config/redis');
 const Poll = require('../models/poll.model');
 const Vote = require('../models/vote.model');
 
-// Connect to MongoDB
 connectDB();
 
-// Create worker for processing votes
 const voteWorker = new Worker(
   'vote-processing',
   async (job) => {
@@ -18,18 +16,15 @@ const voteWorker = new Worker(
     try {
       console.log(`Processing vote ${voteId} for poll ${pollId}`);
 
-      // Get poll
       const poll = await Poll.findById(pollId);
       if (!poll) {
         throw new Error('Poll not found');
       }
 
-      // Update vote counts for each answer
       for (const answer of answers) {
         const question = poll.questions.id(answer.questionId);
         
         if (question && question.type !== 'text') {
-          // Update vote counts for selected options
           for (const optionId of answer.selectedOptions) {
             const option = question.options.id(optionId);
             if (option) {
@@ -39,11 +34,9 @@ const voteWorker = new Worker(
         }
       }
 
-      // Increment total votes
       poll.totalVotes += 1;
       await poll.save();
 
-      // Publish real-time update via Redis
       await redisPub.publish('vote-updates', JSON.stringify({
         type: 'NEW_VOTE',
         pollId: poll._id.toString(),
@@ -68,11 +61,10 @@ const voteWorker = new Worker(
   },
   {
     connection: redisClient,
-    concurrency: 5, // Process 5 jobs concurrently
+    concurrency: 5, 
   }
 );
 
-// Worker event handlers
 voteWorker.on('completed', (job) => {
   console.log(`✓ Job ${job.id} completed`);
 });
@@ -87,7 +79,6 @@ voteWorker.on('error', (err) => {
 
 console.log('Vote processing worker started');
 
-// Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, closing worker...');
   await voteWorker.close();

@@ -48,7 +48,7 @@ const pollSchema = new mongoose.Schema({
   joinCode: {
     type: String,
     required: true,
-    unique: true, // ✅ unique automatically creates index
+    unique: true, 
     uppercase: true,
   },
   questions: [questionSchema],
@@ -83,7 +83,6 @@ const pollSchema = new mongoose.Schema({
   },
 });
 
-// ✅ Keep only necessary indexes
 pollSchema.index({ organizer: 1, createdAt: -1 });
 pollSchema.index({ status: 1 });
 
